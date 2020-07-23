@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        new Vue({
+          el: '#container',
+          data: {
+            callsign: "",
+            passcode: ""
+          },
+          methods: {
+            getPasscode(callsign) {
+              if((/^[a-z]+[0-9][a-z]+((-[0-9]$)|($))/).test(callsign)){
+                callsign = callsign.toUpperCase();
+                let i = 0;
+                let tmp_code = 29666;
+                while(i < callsign.length){
+                  // ^ = XOR Operation
+                  tmp_code = tmp_code ^ callsign.charCodeAt(i) * 256;
+                  tmp_code = tmp_code ^ callsign.charCodeAt(i+1);
+                  i += 2;
+                }
+                tmp_code = tmp_code & 32767;
+                this.passcode = tmp_code;
+              }
+              else{
+                this.passcode = "";
+                alert("Invalid Callsign, Try Again!");
+                this.callsign = "";
+              }
+            }
+          }
+        })
+      })
+    </script>
+
+    <style type="text/css">
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        background-color: #cfcbcb;
+      }
+      label {
+        width: 100%;
+        font-weight: bold;
+      }
+      #container {
+        margin: 0 auto;
+        width: 400px;
+        padding: 10px;
+        border: 1px solid #020202;
+        background-color: #ffffffdc;
+      }
+      #passcode {
+        font-size: 16px;
+      }
+    </style>
+
+</head>
+<body>
+
+  <div id="container">
+    <h2>APRS Passcode Generator</h2>
+    <form>
+      <label for="callsign"><b>Callsign:</b></label>
+      <input  v-model=callsign type="text" id="callsign" name="callsign">
+      <button  v-on:click="getPasscode(callsign)" type="button">Get Passcode!</button>
+      <p id="passcode"><b>Your Passcode: {{ passcode }}</b></p>
+    </form>
+    <p>Source Code on <a href="https://github.com/do3sww" title="Github" target="_blank">Github</a></p>
+  </div>
+
+</body>
+</html>
