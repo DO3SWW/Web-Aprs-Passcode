@@ -13,7 +13,7 @@
           },
           methods: {
             getPasscode(callsign) {
-              if((/^[a-z]+[0-9][a-z]+((-[0-9]$)|($))/).test(callsign)){
+              if((/^[a-zA-Z]+[0-9][a-zA-Z]+((-[0-9]$)|($))/).test(callsign)){
                 callsign = callsign.toUpperCase();
                 let i = 0;
                 let tmp_code = 29666;
