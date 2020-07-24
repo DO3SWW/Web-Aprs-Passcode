@@ -2,6 +2,9 @@
 <html>
   <head>
 
+    <title>APRS Passcode Generator</title>
+    <meta name="description" content="This is a web-based tool to generate passcodes for the APRS-IS network with your amateur radio callsign."/>
+
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
@@ -64,7 +67,7 @@
 
   <div id="container">
     <h2>APRS Passcode Generator</h2>
-    <form>
+    <form  v-on:submit.prevent="getPasscode(callsign)" >
       <label for="callsign"><b>Callsign:</b></label>
       <input  v-model=callsign type="text" id="callsign" name="callsign">
       <button  v-on:click="getPasscode(callsign)" type="button">Get Passcode!</button>
