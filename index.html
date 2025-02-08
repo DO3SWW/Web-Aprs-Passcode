@@ -1,47 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-
     <title>APRS Passcode Generator</title>
     <meta name="description" content="This is a web-based tool to generate passcodes for the APRS-IS network with your amateur radio callsign."/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        new Vue({
-          el: '#container',
-          data: {
-            callsign: "",
-            passcode: ""
-          },
-          methods: {
-            getPasscode(callsign) {
-              if((/^[a-zA-Z0-9-]+$/).test(callsign)){
-                callsign = callsign.toUpperCase();
-                let i = 0;
-                let tmp_code = 29666;
-                while(i < callsign.length){
-                  // ^ = XOR Operation
-                  tmp_code = tmp_code ^ callsign.charCodeAt(i) * 256;
-                  tmp_code = tmp_code ^ callsign.charCodeAt(i+1);
-                  i += 2;
-                }
-                tmp_code = tmp_code & 32767;
-                this.passcode = tmp_code;
+    <script type="module">
+      import { createApp, ref } from 'https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.js';
+
+      createApp({
+        setup() {
+          const callsign = ref("");
+          const passcode = ref("");
+
+          const getPasscode = () => {
+            if((/^[a-zA-Z0-9-]+$/).test(callsign.value)){
+              let cs = callsign.value.toUpperCase();
+              let i = 0;
+              let tmp_code = 29666;
+              while(i < cs.length){
+                // ^ = XOR Operation
+                tmp_code = tmp_code ^ cs.charCodeAt(i) * 256;
+                tmp_code = tmp_code ^ cs.charCodeAt(i+1);
+                i += 2;
               }
-              else{
-                this.passcode = "";
-                alert("Invalid Callsign, Try Again!");
-                this.callsign = "";
-              }
+              tmp_code = tmp_code & 32767;
+              passcode.value = tmp_code;
             }
-          }
-        })
-      })
+            else{
+              passcode.value = "";
+              alert("Invalid Callsign, Try Again!");
+              callsign.value = "";
+            }
+          };
+
+          return {
+            callsign,
+            passcode,
+            getPasscode
+          };
+        }
+      }).mount('#app')
     </script>
 
-    <style type="text/css">
+    <style>
       body {
         font-family: Arial, sans-serif;
         font-size: 14px;
@@ -51,32 +54,32 @@
         width: 100%;
         font-weight: bold;
       }
-      #container {
+      .container {
         margin: 0 auto;
         width: 400px;
         padding: 10px;
         border: 1px solid #020202;
         background-color: #ffffffdc;
       }
-      #passcode {
+      .passcode {
         font-size: 16px;
       }
     </style>
 
-</head>
-<body>
+  </head>
+  <body>
 
-  <div id="container">
-    <h2>APRS Passcode Generator</h2>
-    <p>Enter your amature radio callsign to get a Passocde for the APRS-IS network.</p>
-    <form  v-on:submit.prevent="getPasscode(callsign)" >
-      <label for="callsign"><b>Callsign:</b></label>
-      <input  v-model=callsign type="text" id="callsign" name="callsign">
-      <button  v-on:click="getPasscode(callsign)" type="button">Get Passcode!</button>
-      <p id="passcode"><b>Your Passcode: {{ passcode }}</b></p>
-    </form>
-    <p>Source Code on <a href="https://github.com/DO3SWW/web-aprs-passcode" title="Github" target="_blank" rel="noopener">Github</a></p>
-  </div>
+    <div id="app" class="container">
+      <h2>APRS Passcode Generator</h2>
+      <p>Enter your amateur radio callsign to get a Passcode for the APRS-IS network.</p>
+      <form @submit.prevent="getPasscode">
+        <label for="callsign"><b>Callsign: </b></label>
+        <input v-model="callsign" type="text" id="callsign" name="callsign" />
+        <button type="submit">Get Passcode!</button>
+        <p class="passcode"><b>Your Passcode: {{ passcode }}</b></p>
+      </form>
+      <p>Source Code on <a href="https://github.com/DO3SWW/web-aprs-passcode" title="Github" target="_blank" rel="noopener">Github</a></p>
+    </div>
 
-</body>
+  </body>
 </html>
